@@ -8,7 +8,8 @@ namespace BulkyBookWeb.Models
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
-
+        [Required]
+        [StringLength(100)]
         public string Name { get; set; } = string.Empty;
 
         public int DisplayOrder { get; set; } 
