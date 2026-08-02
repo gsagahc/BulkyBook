@@ -1,4 +1,4 @@
-﻿using BulkyBookWeb.Data;
+﻿using BulkyBook.Data;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -24,7 +24,7 @@ namespace BulkyBookWeb.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [ActionName("Create")]
-        public async Task<IActionResult> CreatePost(BulkyBookWeb.Models.Category category)
+        public async Task<IActionResult> CreatePost(BulkyBook.Models.Category category)
         {
             bool nameExist = await _context.Categories.AnyAsync(c => c.Name.ToLower() == category.Name.ToLower());
               
@@ -59,7 +59,7 @@ namespace BulkyBookWeb.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [ActionName("Edit")]
-        public async Task<IActionResult> Edit(BulkyBookWeb.Models.Category category)
+        public async Task<IActionResult> Edit(BulkyBook.Models.Category category)
         {
             bool nameExist = await _context.Categories.AnyAsync(c => c.Name.ToLower() == category.Name.ToLower());
 
