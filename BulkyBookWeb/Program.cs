@@ -1,6 +1,7 @@
 using BulkyBook.Data ;
 using Microsoft.EntityFrameworkCore;
-
+using BulkyBook.Business.Services;
+using BulkyBook.Business.Services.IServices;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -10,7 +11,7 @@ builder.Services.AddControllersWithViews();
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString)));
-
+builder.Services.AddScoped<ICategoryService, CategoryService>();    
 
 var app = builder.Build();
 

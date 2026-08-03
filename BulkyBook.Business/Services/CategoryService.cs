@@ -20,7 +20,7 @@ namespace BulkyBook.Business.Services
 
         public async Task<Category?> GetCategoryByIdAsync(int id)
         {
-            // placeholder: return null until real implementation is added
+           
             return await _context.Categories.FindAsync(id);
         }
 
@@ -28,7 +28,7 @@ namespace BulkyBook.Business.Services
 
         public async Task<Category> CreateCategoryAsync(Category category)
         {
-            // placeholder: echo back the provided category until real implementation is added
+           
             _context.Categories.Add(category);
             await _context.SaveChangesAsync();
             return category;
@@ -36,19 +36,32 @@ namespace BulkyBook.Business.Services
 
         public async Task UpdateCategoryAsync(Category category)
         {
-            // placeholder: no-op until real implementation is added
+           
             _context.Categories.Update(category);
             await _context.SaveChangesAsync();
         }
 
         public async Task DeleteCategoryAsync(int id)
         {
-            // placeholder: no-op until real implementation is added
+           
             var category = await _context.Categories.FindAsync(id);
-            if (category != null)
+            if (category == null)
             {
-                _context.Categories.Remove(category);
-                await _context.SaveChangesAsync();
+                throw new KeyNotFoundException($"Category with ID {id} not found.");
+            }
+            _context.Categories.Remove(category);
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task<bool> IsCategoryNameUniqueAsync(string name, int? id = null)
+        {
+            if (id.HasValue)
+            {
+                return !await _context.Categories.AnyAsync(c => c.Name.ToLower() == name.ToLower() && c.Id != id.Value);
+            }
+            else
+            {
+                return !await _context.Categories.AnyAsync(c => c.Name.ToLower() == name.ToLower()  );
             }
         }
     }

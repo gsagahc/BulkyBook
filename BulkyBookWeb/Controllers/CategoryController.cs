@@ -1,4 +1,5 @@
-﻿using BulkyBook.Data;
+﻿using BulkyBook.Business.Services.IServices;
+using BulkyBook.Data;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -6,18 +7,19 @@ namespace BulkyBookWeb.Controllers
 {
     public class CategoryController : Controller
     {
-        public readonly ApplicationDbContext _context;
 
-        public CategoryController(ApplicationDbContext contex) 
+       private readonly ICategoryService _categoryService;
+
+        public CategoryController(ICategoryService categoryService) 
         {
-            _context = contex;
+            _categoryService  = categoryService;
         }
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            var categories = _context.Categories.ToList();
+            var categories = await _categoryService.GetAllcategoriesAsync() ;
             return View("Index", categories);
         }
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
            return View();
         }
@@ -26,8 +28,7 @@ namespace BulkyBookWeb.Controllers
         [ActionName("Create")]
         public async Task<IActionResult> CreatePost(BulkyBook.Models.Category category)
         {
-            bool nameExist = await _context.Categories.AnyAsync(c => c.Name.ToLower() == category.Name.ToLower());
-              
+            bool nameExist = await _categoryService.IsCategoryNameUniqueAsync(category.Name);
 
             if (ModelState.IsValid)
             {
@@ -36,8 +37,7 @@ namespace BulkyBookWeb.Controllers
                     ModelState.AddModelError("", "The Display Order cannot exactly match the Name.");
                     return View(category);
                 }
-                _context.Categories.Add(category);
-                await _context.SaveChangesAsync();
+                await _categoryService.CreateCategoryAsync(category);
                 TempData["success"] = "Category created successfully";
                 return RedirectToAction("Index");
             }
@@ -49,7 +49,7 @@ namespace BulkyBookWeb.Controllers
             {
                 return NotFound();
             }
-            var category = _context.Categories.Find(id);
+            var category =  _categoryService.GetCategoryByIdAsync(id.Value).Result;
             if (category == null)
             {
                 return NotFound();
@@ -61,18 +61,22 @@ namespace BulkyBookWeb.Controllers
         [ActionName("Edit")]
         public async Task<IActionResult> Edit(BulkyBook.Models.Category category)
         {
-            bool nameExist = await _context.Categories.AnyAsync(c => c.Name.ToLower() == category.Name.ToLower());
+            bool nameNotExist = false;
+            if (!String.IsNullOrEmpty(category.Name) && 
+                  await  _categoryService.IsCategoryNameUniqueAsync(category.Name, category.Id))
+            {
+                 nameNotExist = await _categoryService.IsCategoryNameUniqueAsync(category.Name, category.Id);
+            }
 
 
             if (ModelState.IsValid)
             {
-                if (String.IsNullOrEmpty(category.Name) || nameExist)
+                if (String.IsNullOrEmpty(category.Name) || !nameNotExist)
                 {
                     ModelState.AddModelError("", "The Display Order cannot exactly match the Name.");
                     return View(category);
                 }
-                _context.Categories.Update(category);
-                await _context.SaveChangesAsync();
+                await _categoryService.UpdateCategoryAsync(category);
                 TempData["success"] = "Category updated successfully";
                 return RedirectToAction("Index");
             }
@@ -84,7 +88,7 @@ namespace BulkyBookWeb.Controllers
             {
                 return NotFound();
             }
-            var category = _context.Categories.Find(id);
+            var category =  _categoryService.GetCategoryByIdAsync(id.Value).Result;
             if (category == null)
             {
                 return NotFound();
@@ -97,21 +101,12 @@ namespace BulkyBookWeb.Controllers
         [ActionName("Delete")]
         public async Task<IActionResult> Delete(int id)
         {
-            var category = await _context.Categories.FindAsync(id);
-            if (category == null)
-            {
-                return NotFound();
-            }
-
-            if (ModelState.IsValid)
-            {
           
-                _context.Categories.Remove(category);
-                _context.SaveChanges();
-                TempData["success"] = "Category deleted successfully";
-                return RedirectToAction("Index");
-            }
-            return View();
+            await _categoryService.DeleteCategoryAsync(id);
+            TempData["success"] = "Category deleted successfully";
+            return RedirectToAction("Index");
+         
+            
         }
     }
 }
