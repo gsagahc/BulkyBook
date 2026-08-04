@@ -2,6 +2,7 @@ using BulkyBook.Data ;
 using Microsoft.EntityFrameworkCore;
 using BulkyBook.Business.Services;
 using BulkyBook.Business.Services.IServices;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -31,13 +32,16 @@ app.UseAuthorization();
 app.MapStaticAssets();
 
 app.MapControllerRoute(
-    name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}")
+    name: "MyArea",
+    pattern: "{area:exists}/{controller=Home}/{action=Index}/{id?}")
     .WithStaticAssets();
 
 app.MapControllerRoute(
-    name: "Category",
-    pattern: "{controller=Category}/{action=Index}/{id?}")
+    name: "default",
+    pattern: "{controller=Home}/{action=Index}/{id?}",
+    defaults: new { area = "Costumer" })
     .WithStaticAssets();
+
+
 
 app.Run();

@@ -1,8 +1,9 @@
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 
-namespace BulkyBookWeb.Controllers
+namespace BulkyBookWeb.Areas.Costumer.Controllers
 {
+    [Area("Costumer")]
     public class HomeController : Controller
     {
         public IActionResult Index()

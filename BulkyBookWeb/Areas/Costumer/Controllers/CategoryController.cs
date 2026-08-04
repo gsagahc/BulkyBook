@@ -3,8 +3,9 @@ using BulkyBook.Data;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
-namespace BulkyBookWeb.Controllers
+namespace BulkyBookWeb.Areas.Costumer.Controllers
 {
+    [Area("Costumer")]
     public class CategoryController : Controller
     {
 
