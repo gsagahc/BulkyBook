@@ -102,7 +102,11 @@ namespace BulkyBookWeb.Areas.Costumer.Controllers
         [ActionName("Delete")]
         public async Task<IActionResult> Delete(int id)
         {
-          
+           if (await _categoryService.IsCategoryUsedByProductAsync(id))
+            {
+                TempData["error"] = "Category cannot be deleted because it is used by a product.";
+                return RedirectToAction("Index");
+            }
             await _categoryService.DeleteCategoryAsync(id);
             TempData["success"] = "Category deleted successfully";
             return RedirectToAction("Index");

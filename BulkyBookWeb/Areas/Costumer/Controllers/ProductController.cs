@@ -1,83 +1,113 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using BulkyBook.Business.Services.IServices;
+using BulkyBook.Data;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace BulkyBookWeb.Areas.Costumer.Controllers
 {
+    [Area("Costumer")]
     public class ProductController : Controller
     {
-        // GET: HomeController1
-        public ActionResult Index()
-        {
-            return View();
-        }
 
-        // GET: HomeController1/Details/5
-        public ActionResult Details(int id)
-        {
-            return View();
-        }
+       private readonly IProductService _productService;
 
-        // GET: HomeController1/Create
-        public ActionResult Create()
+        public ProductController(IProductService productService) 
         {
-            return View();
+            _productService  = productService;
         }
-
-        // POST: HomeController1/Create
+        public async Task<IActionResult> Index()
+        {
+            var products = await _productService.GetAllProductsAsync() ;
+            return View("Index", products);
+        }
+        public async Task<IActionResult> Create()
+        {
+           return View();
+        }
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(IFormCollection collection)
+        [ActionName("Create")]
+        public async Task<IActionResult> CreatePost(BulkyBook.Models.Product product)
         {
-            try
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
-        }
+            bool nameExist = await _productService.IsProductNameUniqueAsync(product.Title);
 
-        // GET: HomeController1/Edit/5
-        public ActionResult Edit(int id)
-        {
+            if (ModelState.IsValid)
+            {
+                if (String.IsNullOrEmpty(product.Title) || nameExist)
+                {
+                    ModelState.AddModelError("", "The Display Order cannot exactly match the Name.");
+                    return View(product);
+                }
+                await _productService.CreateProductAsync(product);
+                TempData["success"] = "Product created successfully";
+                return RedirectToAction("Index");
+            }
             return View();
         }
-
-        // POST: HomeController1/Edit/5
+        public IActionResult Edit(int? id)
+        {
+            if (id == null || id == 0)
+            {
+                return NotFound();
+            }
+            var product =  _productService.GetProductByIdAsync(id.Value).Result;
+            if (product == null)
+            {
+                return NotFound();
+            }
+            return View(product);
+        }
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
+        [ActionName("Edit")]
+        public async Task<IActionResult> Edit(BulkyBook.Models.Product product)
         {
-            try
+            bool nameNotExist = false;
+            if (!String.IsNullOrEmpty(product.Title) && 
+                  await  _productService.IsProductNameUniqueAsync(product.Title, product.Id))
             {
-                return RedirectToAction(nameof(Index));
+                 nameNotExist = await _productService.IsProductNameUniqueAsync(product.Title, product.Id);
             }
-            catch
-            {
-                return View();
-            }
-        }
 
-        // GET: HomeController1/Delete/5
-        public ActionResult Delete(int id)
-        {
+
+            if (ModelState.IsValid)
+            {
+                if (String.IsNullOrEmpty(product.Title) || !nameNotExist)
+                {
+                    ModelState.AddModelError("", "The Display Order cannot exactly match the Name.");
+                    return View(product);
+                }
+                await _productService.UpdateProductAsync(product);
+                TempData["success"] = "Product updated successfully";
+                return RedirectToAction("Index");
+            }
             return View();
         }
-
-        // POST: HomeController1/Delete/5
+        public IActionResult Delete(int? id)
+        {
+            if (id == null || id == 0)
+            {
+                return NotFound();
+            }
+            var product =  _productService.GetProductByIdAsync(id.Value).Result;
+            if (product == null)
+            {
+                return NotFound();
+            }
+            return View(product);
+        }
+        
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
+        [ActionName("Delete")]
+        public async Task<IActionResult> Delete(int id)
         {
-            try
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
+          
+            await _productService.DeleteProductAsync(id);
+            TempData["success"] = "Product deleted successfully";
+            return RedirectToAction("Index");
+         
+            
         }
     }
 }

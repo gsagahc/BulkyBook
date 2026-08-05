@@ -16,19 +16,19 @@ namespace BulkyBook.Business.Services
         public async Task<IEnumerable<Category>> GetAllcategoriesAsync()
         {
             return await _context.Categories.ToListAsync();
-        } 
+        }
 
         public async Task<Category?> GetCategoryByIdAsync(int id)
         {
-           
+
             return await _context.Categories.FindAsync(id);
         }
 
-       
+
 
         public async Task<Category> CreateCategoryAsync(Category category)
         {
-           
+
             _context.Categories.Add(category);
             await _context.SaveChangesAsync();
             return category;
@@ -36,14 +36,14 @@ namespace BulkyBook.Business.Services
 
         public async Task UpdateCategoryAsync(Category category)
         {
-           
+
             _context.Categories.Update(category);
             await _context.SaveChangesAsync();
         }
 
         public async Task DeleteCategoryAsync(int id)
         {
-           
+
             var category = await _context.Categories.FindAsync(id);
             if (category == null)
             {
@@ -61,8 +61,12 @@ namespace BulkyBook.Business.Services
             }
             else
             {
-                return !await _context.Categories.AnyAsync(c => c.Name.ToLower() == name.ToLower()  );
+                return !await _context.Categories.AnyAsync(c => c.Name.ToLower() == name.ToLower());
             }
+        }
+        public async Task<bool> IsCategoryUsedByProductAsync(int id)
+        {
+            return await _context.Products.AnyAsync(p => p.CategoryId == id);
         }
     }
 }

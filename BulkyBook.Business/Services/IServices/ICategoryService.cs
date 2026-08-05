@@ -13,5 +13,6 @@ namespace BulkyBook.Business.Services.IServices
       Task DeleteCategoryAsync(int id);
 
       Task<bool> IsCategoryNameUniqueAsync(string name, int? id = null);
+      Task<bool> IsCategoryUsedByProductAsync(int id);
     }
 }
