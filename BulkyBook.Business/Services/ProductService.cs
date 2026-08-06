@@ -53,15 +53,15 @@ namespace BulkyBook.Business.Services
             await _context.SaveChangesAsync();
         }
 
-        public async Task<bool> IsProductNameUniqueAsync(string name, int? id = null)
+        public async Task<bool> IsProductTitleUniqueAsync(string title, int? id = null)
         {
             if (id.HasValue)
             {
-                return !await _context.Products.AnyAsync(p => p.Title.ToLower() == name.ToLower() && p.Id != id.Value);
+                return !await _context.Products.AnyAsync(p => p.Title.ToLower() == title.ToLower() && p.Id != id.Value);
             }
             else
             {
-                return !await _context.Products.AnyAsync(p => p.Title.ToLower() == name.ToLower());
+                return !await _context.Products.AnyAsync(p => p.Title.ToLower() == title.ToLower());
             }
         }
     }

@@ -29,11 +29,11 @@ namespace BulkyBookWeb.Areas.Costumer.Controllers
         [ActionName("Create")]
         public async Task<IActionResult> CreatePost(BulkyBook.Models.Product product)
         {
-            bool nameExist = await _productService.IsProductNameUniqueAsync(product.Title);
+            bool titleExist = await _productService.IsProductTitleUniqueAsync(product.Title);
 
             if (ModelState.IsValid)
             {
-                if (String.IsNullOrEmpty(product.Title) || nameExist)
+                if (String.IsNullOrEmpty(product.Title) || titleExist)
                 {
                     ModelState.AddModelError("", "The Display Order cannot exactly match the Name.");
                     return View(product);
@@ -62,19 +62,19 @@ namespace BulkyBookWeb.Areas.Costumer.Controllers
         [ActionName("Edit")]
         public async Task<IActionResult> Edit(BulkyBook.Models.Product product)
         {
-            bool nameNotExist = false;
+            bool titleNotExist = false;
             if (!String.IsNullOrEmpty(product.Title) && 
-                  await  _productService.IsProductNameUniqueAsync(product.Title, product.Id))
+                  await  _productService.IsProductTitleUniqueAsync(product.Title, product.Id))
             {
-                 nameNotExist = await _productService.IsProductNameUniqueAsync(product.Title, product.Id);
+                 titleNotExist = await _productService.IsProductTitleUniqueAsync(product.Title, product.Id);
             }
 
 
             if (ModelState.IsValid)
             {
-                if (String.IsNullOrEmpty(product.Title) || !nameNotExist)
+                if (String.IsNullOrEmpty(product.Title) || !titleNotExist)
                 {
-                    ModelState.AddModelError("", "The Display Order cannot exactly match the Name.");
+                    ModelState.AddModelError("", "The Display Order cannot exactly match the Title.");
                     return View(product);
                 }
                 await _productService.UpdateProductAsync(product);
