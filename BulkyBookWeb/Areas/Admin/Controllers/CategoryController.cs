@@ -3,9 +3,9 @@ using BulkyBook.Data;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
-namespace BulkyBookWeb.Areas.Costumer.Controllers
+namespace BulkyBookWeb.Areas.Admin.Controllers
 {
-    [Area("Costumer")]
+    [Area("Admin")]
     public class CategoryController : Controller
     {
 
@@ -17,7 +17,7 @@ namespace BulkyBookWeb.Areas.Costumer.Controllers
         }
         public async Task<IActionResult> Index()
         {
-            var categories = await _categoryService.GetAllcategoriesAsync() ;
+            var categories = await _categoryService.GetAllCategoriesAsync() ;
             return View("Index", categories);
         }
         public async Task<IActionResult> Create()
@@ -29,7 +29,7 @@ namespace BulkyBookWeb.Areas.Costumer.Controllers
         [ActionName("Create")]
         public async Task<IActionResult> CreatePost(BulkyBook.Models.Category category)
         {
-            bool nameExist = await _categoryService.IsCategoryNameUniqueAsync(category.Name);
+            bool nameExist = !await _categoryService.IsCategoryNameUniqueAsync(category.Name);
 
             if (ModelState.IsValid)
             {
