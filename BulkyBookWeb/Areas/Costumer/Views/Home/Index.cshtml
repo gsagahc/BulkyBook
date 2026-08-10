@@ -21,7 +21,7 @@
                     <div class="card h-100 border shadow-sm book-card">
                         <a asp-action="Details" asp-route-productId="@product.Id" class="text-decoration-none">
                             <div style="aspect-ratio: 3/4; overflow: hidden;">
-                                @* display image if available, otherwise placeholder *@
+                              
                                 @if (!string.IsNullOrEmpty(product.ImageUrl))
                                 {
                                     <img src="@product.ImageUrl" alt="@product.Title" class="img-fluid w-100 h-100" />
@@ -30,6 +30,7 @@
                                 {
                                     <div class="w-100 h-100 d-flex align-items-center justify-content-center bg-light">
                                         <i class="bi bi-book display-3 text-secondary"></i>
+                                        
                                     </div>
                                 }
                             </div>
