@@ -1,8 +1,10 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using BulkyBook.Models;
-namespace BulkyBook.Data;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity;
+namespace BulkyBook.DataAccess.Data;
 
-    public class ApplicationDbContext : DbContext
+    public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     {
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
         {
@@ -11,10 +13,12 @@ namespace BulkyBook.Data;
         // Define your database tables here
         public DbSet<Category> Categories { get; set; }
         public DbSet<Product> Products { get; set; }
+        public DbSet<ApplicationUser> Users { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<Category>().HasData(
+        base.OnModelCreating(modelBuilder);
+        modelBuilder.Entity<Category>().HasData(
                 new Category { Id = 1, Name = "Action", DisplayOrder = 1, OrderID = 0 },
                 new Category { Id = 2, Name = "SciFi" , DisplayOrder = 2, OrderID = 1 },
                 new Category { Id = 3, Name = "History" , DisplayOrder = 3, OrderID = 2 }

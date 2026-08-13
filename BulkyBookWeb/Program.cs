@@ -1,7 +1,9 @@
-using BulkyBook.Data ;
+using BulkyBook.DataAccess.Data ;
 using Microsoft.EntityFrameworkCore;
 using BulkyBook.Business.Services;
 using BulkyBook.Business.Services.IServices;
+using Microsoft.AspNetCore.Identity;
+using BulkyBook.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -12,7 +14,8 @@ builder.Services.AddControllersWithViews();
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString)));
-
+builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options=> options.SignIn.RequireConfirmedAccount=true)
+    .AddEntityFrameworkStores<ApplicationDbContext>();
 builder.Services.AddScoped<ICategoryService, CategoryService>();    
 builder.Services.AddScoped<IProductService, ProductService>();
 var app = builder.Build();
@@ -27,7 +30,7 @@ if (!app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 app.UseRouting();
-
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapStaticAssets();
