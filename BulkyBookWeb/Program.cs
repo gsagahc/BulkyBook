@@ -1,9 +1,10 @@
-using BulkyBook.DataAccess.Data ;
-using Microsoft.EntityFrameworkCore;
 using BulkyBook.Business.Services;
 using BulkyBook.Business.Services.IServices;
-using Microsoft.AspNetCore.Identity;
+using BulkyBook.DataAccess.Data ;
 using BulkyBook.Models;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -14,10 +15,12 @@ builder.Services.AddControllersWithViews();
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString)));
-builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options=> options.SignIn.RequireConfirmedAccount=true)
+builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options=> options.SignIn.RequireConfirmedAccount=false)
     .AddEntityFrameworkStores<ApplicationDbContext>();
+ 
 builder.Services.AddScoped<ICategoryService, CategoryService>();    
 builder.Services.AddScoped<IProductService, ProductService>();
+builder.Services.AddScoped<IApplicationUserService, ApplicationUserService>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

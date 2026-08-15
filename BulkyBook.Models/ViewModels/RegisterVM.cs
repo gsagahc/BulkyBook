@@ -28,6 +28,6 @@ namespace BulkyBook.Models.ViewModels
         public string? PostalCode { get; set; }
         public string? Country { get; set; }
         [Display(Name = "Phone number")]
-        public string phoneNumber { get; set; } = string.Empty;
+        public string PhoneNumber { get; set; } = string.Empty;
     }
 }
