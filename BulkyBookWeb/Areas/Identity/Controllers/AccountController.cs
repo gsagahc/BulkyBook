@@ -1,10 +1,11 @@
 ﻿using BulkyBook.Business.Services.IServices;
 using BulkyBook.Models;
+using BulkyBook.Models.Enums;
 using BulkyBook.Models.ViewModels;
+using BulkyBook.Utility;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using BulkyBook.Models.Enums;
 
 namespace BulkyBookWeb.Areas.Identity.Controllers
 {
@@ -14,12 +15,15 @@ namespace BulkyBookWeb.Areas.Identity.Controllers
         private readonly IApplicationUserService _applicationUserService;
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
+        private readonly RoleManager<IdentityRole> _roleManager;
 
-        public AccountController(IApplicationUserService applicationUserService, UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager)
+        public AccountController(IApplicationUserService applicationUserService, UserManager<ApplicationUser> userManager, 
+            SignInManager<ApplicationUser> signInManager, RoleManager<IdentityRole> roleManager)
         {
             _applicationUserService = applicationUserService;
             _userManager = userManager;
             _signInManager = signInManager;
+            _roleManager = roleManager;
         }
        
         public IActionResult Login()
@@ -47,8 +51,28 @@ namespace BulkyBookWeb.Areas.Identity.Controllers
 
         public IActionResult Register()
         {
+            if(!_roleManager.RoleExistsAsync(RoleTypes.RoleAdmin).GetAwaiter().GetResult())
+            {
+                _roleManager.CreateAsync(new IdentityRole(RoleTypes.RoleAdmin)).GetAwaiter().GetResult();
+                _roleManager.CreateAsync(new IdentityRole(RoleTypes.RoleCostumer)).GetAwaiter().GetResult();
+                _roleManager.CreateAsync(new IdentityRole(RoleTypes.RoleEmployee)).GetAwaiter().GetResult();
+            }
+            var model = new RegisterVM();
+            //if (User.IsInRole(RoleTypes.RoleAdmin))
+            //{
+                model.RoleList =
+                    [
+                     new SelectListItem{Text=RoleTypes.RoleCostumer, Value=RoleTypes.RoleCostumer},
+                     new SelectListItem{Text=RoleTypes.RoleAdmin, Value=RoleTypes.RoleAdmin},
+                     new SelectListItem{Text=RoleTypes.RoleEmployee, Value=RoleTypes.RoleEmployee},
+                ];
+            //}
+            //else
+            //{
+            //    model.RoleList = new List<SelectListItem>();
+            //}
             ViewBag.Paises = new SelectList(Enum.GetValues(typeof(CountryEnum)));
-            return View();
+            return View(model);
         }
         [HttpPost]
         [ValidateAntiForgeryToken]

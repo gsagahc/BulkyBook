@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Text;
 
 
@@ -16,6 +17,8 @@ namespace BulkyBook.Models
         public string? State { get; set; }
         public string? PostalCode { get; set; }
         public string? Country { get; set; }
+        [NotMapped]
+        public string Role { get; set; }
 
         public ApplicationUser()
         {
