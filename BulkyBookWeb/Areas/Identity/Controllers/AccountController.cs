@@ -3,6 +3,8 @@ using BulkyBook.Models;
 using BulkyBook.Models.ViewModels;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using BulkyBook.Models.Enums;
 
 namespace BulkyBookWeb.Areas.Identity.Controllers
 {
@@ -13,9 +15,9 @@ namespace BulkyBookWeb.Areas.Identity.Controllers
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
 
-        public AccountController( UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager)
+        public AccountController(IApplicationUserService applicationUserService, UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager)
         {
-          
+            _applicationUserService = applicationUserService;
             _userManager = userManager;
             _signInManager = signInManager;
         }
@@ -45,7 +47,7 @@ namespace BulkyBookWeb.Areas.Identity.Controllers
 
         public IActionResult Register()
         {
-           
+            ViewBag.Paises = new SelectList(Enum.GetValues(typeof(CountryEnum)));
             return View();
         }
         [HttpPost]
@@ -61,19 +63,12 @@ namespace BulkyBookWeb.Areas.Identity.Controllers
                 if (userNameExists != null)
                 {
                     ModelState.AddModelError("", "User already exists.");
+                    ViewBag.Paises = new SelectList(Enum.GetValues(typeof(CountryEnum)));
                     return View(registerVM);
                 }
-                var user = new ApplicationUser
-                {
-                    UserName = registerVM.Email,
-                    Email = registerVM.Email,
-                    Name = registerVM.Name,
-                    PhoneNumber = registerVM.PhoneNumber,
-                    StreetAddress = registerVM.StreetAddress,
-                    City = registerVM.City,
-                    State = registerVM.State,
-                    PostalCode = registerVM.PostalCode
-                };
+                //var user = new ApplicationUser();
+                ApplicationUser user= await  _applicationUserService.AddRegister(registerVM);
+               
                 var result = await _userManager.CreateAsync(user, registerVM.Password);
                 if (result.Succeeded)
                 {
