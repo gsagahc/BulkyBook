@@ -82,6 +82,7 @@ namespace BulkyBookWeb.Areas.Identity.Controllers
                 }
 
             }
+            ViewBag.Paises = new SelectList(Enum.GetValues(typeof(CountryEnum)));
             return View(registerVM);
         }
         public IActionResult AccessDenied()
