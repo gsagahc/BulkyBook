@@ -2,7 +2,9 @@
 
 
 new DataTable('#tblData', {
-    ajax: '/product/getall?includeCategory=true',
+
+    ajax: '/admin/product/getall?includeCategory=true',
+   
     columns: [
         { data: 'title', "width": "25%" },
         { data: 'isbn', "width": "15%" },

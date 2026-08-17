@@ -6,6 +6,7 @@ using BulkyBook.Utility;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Newtonsoft.Json.Linq;
 
 namespace BulkyBookWeb.Areas.Identity.Controllers
 {
@@ -58,19 +59,19 @@ namespace BulkyBookWeb.Areas.Identity.Controllers
                 _roleManager.CreateAsync(new IdentityRole(RoleTypes.RoleEmployee)).GetAwaiter().GetResult();
             }
             var model = new RegisterVM();
-            //if (User.IsInRole(RoleTypes.RoleAdmin))
-            //{
+            if (User.IsInRole(RoleTypes.RoleAdmin))
+            {
                 model.RoleList =
                     [
                      new SelectListItem{Text=RoleTypes.RoleCostumer, Value=RoleTypes.RoleCostumer},
                      new SelectListItem{Text=RoleTypes.RoleAdmin, Value=RoleTypes.RoleAdmin},
                      new SelectListItem{Text=RoleTypes.RoleEmployee, Value=RoleTypes.RoleEmployee},
                 ];
-            //}
-            //else
-            //{
-            //    model.RoleList = new List<SelectListItem>();
-            //}
+            }
+            else
+            {
+                model.RoleList = new List<SelectListItem> { new SelectListItem { Text = RoleTypes.RoleCostumer, Value = RoleTypes.RoleCostumer } };
+            }
             ViewBag.Paises = new SelectList(Enum.GetValues(typeof(CountryEnum)));
             return View(model);
         }
@@ -96,6 +97,14 @@ namespace BulkyBookWeb.Areas.Identity.Controllers
                 var result = await _userManager.CreateAsync(user, registerVM.Password);
                 if (result.Succeeded)
                 {
+                    if(!string.IsNullOrEmpty(registerVM.Role))
+                    {
+                        await _userManager.AddToRoleAsync(user, registerVM.Role);
+                    }
+                    else
+                    {
+                        await _userManager.AddToRoleAsync(user, RoleTypes.RoleCostumer);
+                    }
                     TempData["success"] = "User created successfully";
                     await _signInManager.SignInAsync(user, isPersistent: false);
                     return RedirectToAction("", "", new { area = "Costumer" });

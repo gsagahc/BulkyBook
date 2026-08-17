@@ -1,32 +1,37 @@
 ﻿using BulkyBook.Business.Services.IServices;
 using BulkyBook.Models;
 using BulkyBook.Models.ViewModels;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using System.Security;
 
 
 namespace BulkyBookWeb.Areas.Admin.Controllers
 {
     [Area("Admin")]
+    [Authorize(Roles = "Admin, Employee")]
     public class ProductController : Controller
     {
 
        private readonly IProductService _productService;
        private readonly ICategoryService _categoryService;
        private readonly IWebHostEnvironment _webHostEnvironment;
-
+        
         public ProductController(IProductService productService, ICategoryService categoryService, IWebHostEnvironment webHostEnvironment) 
         {
             _productService  = productService;
             _categoryService = categoryService;
             _webHostEnvironment = webHostEnvironment;
         }
+        [AllowAnonymous]
+      
         public async Task<IActionResult> Index()
         {
-           
-            return View();
+            var products = await _productService.GetAllProductsAsync();
+            return View("Index", products );
         }
-       
+      
         public async Task<IActionResult> Upsert(int? id)
         {
             var categories = await _categoryService.GetAllCategoriesAsync();
@@ -53,6 +58,7 @@ namespace BulkyBookWeb.Areas.Admin.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [ActionName("Upsert")]
+    
         public async Task<IActionResult> UpsertPost(ProductVM productVM, IFormFile? file)
         {
             if (ModelState.IsValid)
@@ -149,20 +155,7 @@ namespace BulkyBookWeb.Areas.Admin.Controllers
             }
             return View();
         }
-        //public IActionResult Delete(int? id)
-        //{
-        //    if (id == null || id == 0)
-        //    {
-        //        return NotFound();
-        //    }
-        //    var product =  _productService.GetProductByIdAsync(id.Value).Result;
-        //    if (product == null)
-        //    {
-        //        return NotFound();
-        //    }
-        //    return View(product);
-        //}
-        
+               
         
         #region API CALLS
         public async Task<IActionResult> GetAll()

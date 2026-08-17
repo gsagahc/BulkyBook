@@ -1,11 +1,13 @@
 ﻿using BulkyBook.Business.Services.IServices;
 using BulkyBook.DataAccess.Data;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace BulkyBookWeb.Areas.Admin.Controllers
 {
     [Area("Admin")]
+  //[Authorize(Roles = "Admin, Employee")]
     public class CategoryController : Controller
     {
 
@@ -15,6 +17,7 @@ namespace BulkyBookWeb.Areas.Admin.Controllers
         {
             _categoryService  = categoryService;
         }
+        
         public async Task<IActionResult> Index()
         {
             var categories = await _categoryService.GetAllCategoriesAsync() ;
