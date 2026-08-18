@@ -1,11 +1,7 @@
 ﻿var productDataTable;
-
-
 new DataTable('#tblData', {
-
-    ajax: '/admin/product/getall?includeCategory=true',
-   
-    columns: [
+            ajax: '/admin/product/getall?includeCategory=true',
+        columns: [
         { data: 'title', "width": "25%" },
         { data: 'isbn', "width": "15%" },
         { data: 'price', "width": "10%", "render": function (data) { return 'R$' + data.toFixed(2); } },

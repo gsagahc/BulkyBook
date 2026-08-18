@@ -10,7 +10,7 @@ using System.Security;
 namespace BulkyBookWeb.Areas.Admin.Controllers
 {
     [Area("Admin")]
-    [Authorize(Roles = "Admin, Employee")]
+
     public class ProductController : Controller
     {
 
@@ -31,7 +31,7 @@ namespace BulkyBookWeb.Areas.Admin.Controllers
             var products = await _productService.GetAllProductsAsync();
             return View("Index", products );
         }
-      
+        [Authorize(Roles = "Admin, Employee")]
         public async Task<IActionResult> Upsert(int? id)
         {
             var categories = await _categoryService.GetAllCategoriesAsync();
@@ -58,7 +58,7 @@ namespace BulkyBookWeb.Areas.Admin.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [ActionName("Upsert")]
-    
+        [Authorize(Roles = "Admin, Employee")]
         public async Task<IActionResult> UpsertPost(ProductVM productVM, IFormFile? file)
         {
             if (ModelState.IsValid)
@@ -165,6 +165,7 @@ namespace BulkyBookWeb.Areas.Admin.Controllers
         }
 
         [HttpDelete]
+        [Authorize(Roles = "Admin, Employee")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null || id == 0)

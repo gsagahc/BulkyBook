@@ -42,7 +42,9 @@ namespace BulkyBookWeb.Areas.Identity.Controllers
                 if (result.Succeeded)
                 {
                     
-                    return RedirectToAction("", "", new { area = "Costumer" });
+                    return RedirectToAction("Index", "Home", new { area = "Costumer" });
+                   
+                     
                 }
                 ModelState.AddModelError(string.Empty, "Invalid login attempt.");
             }
