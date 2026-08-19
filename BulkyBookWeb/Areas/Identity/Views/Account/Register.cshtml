@@ -12,7 +12,7 @@
                 </div>
 
                 <div class="card-body p-5">
-                    <form method="post">
+                    <form method="post" asp-route-returnUrl="@ViewData["ReturnUrl"]">
                         <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
                         
 
@@ -110,7 +110,8 @@
                     <div class="text-center">
                         
                         <p class="mb-0">Already have an account? <a asp-area="Identity" asp-controller="account" 
-                            asp-action="Login" class="fw-semibold text-decoration-none" style="color: #17A34A;">Log in</a></p>
+                            asp-action="Login" asp-route-returnUrl="@ViewData["ReturnUrl"]"
+                            class="fw-semibold text-decoration-none" style="color: #17A34A;">Log in</a></p>
                     </div>
                 </div>
             </div>

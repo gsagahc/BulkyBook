@@ -27,9 +27,10 @@ namespace BulkyBookWeb.Areas.Identity.Controllers
             _roleManager = roleManager;
         }
        
-        public IActionResult Login()
+        public IActionResult Login(string? returnUrl=null)
         {
-            return View();
+            ViewData["ReturnUrl"] = returnUrl;
+            return View(returnUrl);
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -41,8 +42,12 @@ namespace BulkyBookWeb.Areas.Identity.Controllers
                  password:loginVM.Password, isPersistent: loginVM.RememberMe, lockoutOnFailure: false);
                 if (result.Succeeded)
                 {
-                    
-                    return RedirectToAction("Index", "Home", new { area = "Costumer" });
+                    if (string.IsNullOrEmpty(returnUrl) || !Url.IsLocalUrl(returnUrl))
+                    {
+                        return Redirect(returnUrl);
+                    }
+
+                        return RedirectToAction("Index", "Home", new { area = "Costumer" });
                    
                      
                 }
@@ -52,9 +57,10 @@ namespace BulkyBookWeb.Areas.Identity.Controllers
         }
 
 
-        public IActionResult Register()
+        public IActionResult Register(string? returnUrl = null)
         {
-            if(!_roleManager.RoleExistsAsync(RoleTypes.RoleAdmin).GetAwaiter().GetResult())
+            ViewData["ReturnUrl"] = returnUrl;
+            if (!_roleManager.RoleExistsAsync(RoleTypes.RoleAdmin).GetAwaiter().GetResult())
             {
                 _roleManager.CreateAsync(new IdentityRole(RoleTypes.RoleAdmin)).GetAwaiter().GetResult();
                 _roleManager.CreateAsync(new IdentityRole(RoleTypes.RoleCostumer)).GetAwaiter().GetResult();
@@ -80,7 +86,7 @@ namespace BulkyBookWeb.Areas.Identity.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [ActionName("Register")]
-        public async Task<IActionResult> RegisterPost(RegisterVM registerVM)
+        public async Task<IActionResult> RegisterPost(RegisterVM registerVM, string? returnUrl = null)
         {
             
             if (ModelState.IsValid)

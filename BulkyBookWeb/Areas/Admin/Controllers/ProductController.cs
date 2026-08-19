@@ -1,7 +1,9 @@
 ﻿using BulkyBook.Business.Services.IServices;
 using BulkyBook.Models;
 using BulkyBook.Models.ViewModels;
+using BulkyBook.Utility;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using System.Security;
@@ -10,28 +12,35 @@ using System.Security;
 namespace BulkyBookWeb.Areas.Admin.Controllers
 {
     [Area("Admin")]
-
+    [Authorize(Roles = "Admin, Employee")]
     public class ProductController : Controller
     {
 
        private readonly IProductService _productService;
        private readonly ICategoryService _categoryService;
        private readonly IWebHostEnvironment _webHostEnvironment;
-        
-        public ProductController(IProductService productService, ICategoryService categoryService, IWebHostEnvironment webHostEnvironment) 
+     
+
+        public ProductController(IProductService productService, ICategoryService categoryService, IWebHostEnvironment webHostEnvironment)
         {
             _productService  = productService;
             _categoryService = categoryService;
             _webHostEnvironment = webHostEnvironment;
+          
         }
         [AllowAnonymous]
-      
+
         public async Task<IActionResult> Index()
         {
-            var products = await _productService.GetAllProductsAsync();
-            return View("Index", products );
+            if (User.IsInRole(RoleTypes.RoleAdmin))
+            {
+                return View("Index", (IEnumerable<Product>?)await _productService.GetAllProductsAsync());
+            }
+               return RedirectToAction("Product", "Home", new { area = "Costumer" });
+
         }
-        [Authorize(Roles = "Admin, Employee")]
+
+      
         public async Task<IActionResult> Upsert(int? id)
         {
             var categories = await _categoryService.GetAllCategoriesAsync();
@@ -58,7 +67,7 @@ namespace BulkyBookWeb.Areas.Admin.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [ActionName("Upsert")]
-        [Authorize(Roles = "Admin, Employee")]
+        
         public async Task<IActionResult> UpsertPost(ProductVM productVM, IFormFile? file)
         {
             if (ModelState.IsValid)
@@ -155,9 +164,10 @@ namespace BulkyBookWeb.Areas.Admin.Controllers
             }
             return View();
         }
-               
-        
+
+
         #region API CALLS
+        [AllowAnonymous]
         public async Task<IActionResult> GetAll()
         {
             var products = await _productService.GetAllProductsAsync(true);
