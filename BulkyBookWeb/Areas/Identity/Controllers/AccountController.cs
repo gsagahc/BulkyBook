@@ -42,7 +42,7 @@ namespace BulkyBookWeb.Areas.Identity.Controllers
                  password:loginVM.Password, isPersistent: loginVM.RememberMe, lockoutOnFailure: false);
                 if (result.Succeeded)
                 {
-                    if (string.IsNullOrEmpty(returnUrl) || !Url.IsLocalUrl(returnUrl))
+                    if (!string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl))
                     {
                         return Redirect(returnUrl);
                     }
@@ -100,9 +100,23 @@ namespace BulkyBookWeb.Areas.Identity.Controllers
                     return View(registerVM);
                 }
                 //var user = new ApplicationUser();
-                ApplicationUser user= await  _applicationUserService.AddRegister(registerVM);
-               
-                var result = await _userManager.CreateAsync(user, registerVM.Password);
+                var user = new ApplicationUser
+                {
+                    Name = registerVM.Name,
+                    Email = registerVM.Email,
+                    UserName = registerVM.Email,
+                    StreetAddress = registerVM.StreetAddress,
+                    City = registerVM.City,
+                    State = registerVM.State,
+                    PostalCode = registerVM.PostalCode,
+                    Country = registerVM.Country,
+                    PhoneNumber = registerVM.PhoneNumber,
+                    Role = registerVM.Role
+                };
+
+                var result = await _userManager.CreateAsync(user, registerVM.Password);    
+
+
                 if (result.Succeeded)
                 {
                     if(!string.IsNullOrEmpty(registerVM.Role))
@@ -126,6 +140,7 @@ namespace BulkyBookWeb.Areas.Identity.Controllers
             ViewBag.Paises = new SelectList(Enum.GetValues(typeof(CountryEnum)));
             return View(registerVM);
         }
+   
         public IActionResult AccessDenied()
         {
             return View();

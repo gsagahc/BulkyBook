@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 namespace BulkyBookWeb.Areas.Admin.Controllers
 {
     [Area("Admin")]
-
+    [Authorize(Roles = "Admin, Employee")]
     public class CategoryController : Controller
     {
 
@@ -17,7 +17,7 @@ namespace BulkyBookWeb.Areas.Admin.Controllers
         {
             _categoryService  = categoryService;
         }
-        [Authorize(Roles = "Admin, Employee")]
+        [AllowAnonymous]
         public async Task<IActionResult> Index()
         {
             var categories = await _categoryService.GetAllCategoriesAsync() ;
@@ -31,7 +31,7 @@ namespace BulkyBookWeb.Areas.Admin.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [ActionName("Create")]
-        [Authorize(Roles = "Admin, Employee")]
+       
         public async Task<IActionResult> CreatePost(BulkyBook.Models.Category category)
         {
             bool nameExist = !await _categoryService.IsCategoryNameUniqueAsync(category.Name);
@@ -49,7 +49,7 @@ namespace BulkyBookWeb.Areas.Admin.Controllers
             }
             return View();
         }
-        [Authorize(Roles = "Admin, Employee")]
+        
         public IActionResult Edit(int? id)
         {
             if (id == null || id == 0)
@@ -66,7 +66,7 @@ namespace BulkyBookWeb.Areas.Admin.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [ActionName("Edit")]
-        [Authorize(Roles = "Admin, Employee")]
+  
         public async Task<IActionResult> Edit(BulkyBook.Models.Category category)
         {
             bool nameNotExist = false;
@@ -108,7 +108,7 @@ namespace BulkyBookWeb.Areas.Admin.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [ActionName("Delete")]
-        [Authorize(Roles = "Admin, Employee")]
+      
         public async Task<IActionResult> Delete(int id)
         {
            if (await _categoryService.IsCategoryUsedByProductAsync(id))
