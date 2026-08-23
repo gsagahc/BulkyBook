@@ -30,7 +30,7 @@ namespace BulkyBookWeb.Areas.Identity.Controllers
         public IActionResult Login(string? returnUrl=null)
         {
             ViewData["ReturnUrl"] = returnUrl;
-            return View(returnUrl);
+            return View();
         }
         [HttpPost]
         [ValidateAntiForgeryToken]

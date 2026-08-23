@@ -7,7 +7,7 @@ using System.Text;
 
 namespace BulkyBook.Models
 {
-    internal class ShoppingCart
+    public class ShoppingCart
     {
         public int Id { get; set; }
 
@@ -20,11 +20,11 @@ namespace BulkyBook.Models
         [Range(1, 1000, ErrorMessage = "Please enter a value between 1 and 1000")]
         public int Count { get; set; }
         
-        public required string ApplicationUserId { get; set; }
+        public  string UserId { get; set; }
         
-        [ForeignKey("ApplicationUserId")]
+        [ForeignKey("UserId")]
         [ValidateNever]
-        public required ApplicationUser ApplicationUser { get; set; }
+        public  ApplicationUser ApplicationUser { get; set; }
 
         [NotMapped]
         public double Price

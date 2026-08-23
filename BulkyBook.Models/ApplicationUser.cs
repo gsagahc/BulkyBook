@@ -24,5 +24,6 @@ namespace BulkyBook.Models
         {
             // Initialize properties if needed
         }
+
     }
 }

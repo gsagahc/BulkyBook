@@ -7,7 +7,7 @@ using System.Text;
 
 namespace BulkyBook.Models
 {
-    internal class OrderHeader
+    public class OrderHeader
     {
         public int Id { get; set; }
         public string ApplicationUserId { get; set; }
@@ -43,5 +43,4 @@ namespace BulkyBook.Models
         [ValidateNever]
         public IEnumerable<OrderDetails> OrderDetails { get; set; }
     }
-}
 }

@@ -7,7 +7,7 @@ using System.Text;
 
 namespace BulkyBook.Models
 {
-    internal class OrderDetails
+    public class OrderDetails
     {
         public int Id { get; set; }
         [Required]
