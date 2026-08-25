@@ -92,7 +92,14 @@ namespace BulkyBook.Business.Services
 
         public Task IncrementCartItemCountAsync(ShoppingCart cartItem)
         {
-            cartItem.Count++;
+            if (cartItem.Count >= 1000)
+            {
+                cartItem.Count = 1000;
+            }
+            else
+            {
+                cartItem.Count++;
+            }
             return UpdateCartAsync(cartItem);
         }
 

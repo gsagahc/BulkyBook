@@ -140,7 +140,7 @@
                             @foreach (var item in Model.ShoppingCartList)
                             {
                                 <div class="d-flex justify-content-between mb-1" style="font-size: 0.8rem;">
-                                    <span class="text-secondary text-truncate me-2">@item.Product.Title &times; 1</span>
+                                    <span class="text-secondary text-truncate me-2">@item.Product.Title &times; @item.Count</span>
                                     <span class="fw-medium flex-shrink-0">@((item.Price * item.Count).ToString("c"))</span>
                                 </div>
                             }

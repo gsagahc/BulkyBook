@@ -4,7 +4,7 @@ using System.Text;
 
 namespace BulkyBook.Utility
 {
-    public class Session
+    public class MySession
     {
        public const string SessionCart = "SessionShoppingCartBulkyBook";
     }
