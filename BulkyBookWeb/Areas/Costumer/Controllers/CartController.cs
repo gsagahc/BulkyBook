@@ -78,7 +78,7 @@ namespace BulkyBookWeb.Areas.Costumer.Controllers
             shoppingCartVM.ShoppingCartList = cartItems;
             shoppingCartVM.OrderHeader.OrderDate = DateTime.UtcNow;
             shoppingCartVM.OrderHeader.ApplicationUserId = userId;
-
+            shoppingCartVM.OrderHeader.OrderTotal = cartItems.Sum(item => item.Price * item.Count);
             foreach (var item in cartItems)
             {
                 var count = Request.Form[$"cartItem_{item.Id}"];
@@ -96,6 +96,7 @@ namespace BulkyBookWeb.Areas.Costumer.Controllers
             }).ToList();
 
             await _orderService.CreateOrderAsync(shoppingCartVM.OrderHeader);
+            await _shoppingCartService.ClearCartAsync(userId);
             return RedirectToAction("OrderConfirmation", new { id = shoppingCartVM.OrderHeader.Id });
            
 
