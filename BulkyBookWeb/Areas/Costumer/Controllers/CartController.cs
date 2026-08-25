@@ -5,10 +5,6 @@ using BulkyBook.Models.ViewModels;
 using BulkyBook.Utility;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Stripe;
-using Stripe.Checkout;
-using System.Diagnostics;
-using System.Linq;
 using System.Security.Claims;
 
 namespace BulkyBookWeb.Areas.Costumer.Controllers
@@ -154,6 +150,23 @@ namespace BulkyBookWeb.Areas.Costumer.Controllers
             await _shoppingCartService.UpdateCartAsync(cart);
             return RedirectToAction(nameof(Index));
 
+        }
+        public async Task<IActionResult> GetCartCountAsync()
+        {
+            var claimsIdentity = (ClaimsIdentity)User.Identity;
+            var userId = claimsIdentity?.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            int count =0;
+            ShoppingCart cart ;
+            if (string.IsNullOrEmpty(userId))
+            {
+                //do nothing
+            }
+            else
+            {
+                cart = (ShoppingCart)await _shoppingCartService.GetCartByUserIdAsync(userId);
+                return View(cart);
+            }
+            return NotFound();
         }
     }
 }
