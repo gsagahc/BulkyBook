@@ -42,18 +42,28 @@ namespace BulkyBookWeb.Areas.Identity.Controllers
                  password:loginVM.Password, isPersistent: loginVM.RememberMe, lockoutOnFailure: false);
                 if (result.Succeeded)
                 {
-                    if (!string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl))
+                    if (User.IsInRole(RoleTypes.RoleAdmin))
                     {
-                        return Redirect(returnUrl);
-                    }
-
                         return RedirectToAction("Index", "Home", new { area = "Costumer" });
-                   
+                    }
+                    else 
+                    {
+                        if (!string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl))
+                        {
+                            return Redirect(returnUrl);
+                        }
+                        else
+                        {
+                            return RedirectToAction("Index", "Home", new { area = "Costumer" });
+                        }
+                       
+                    }
                      
                 }
                 ModelState.AddModelError(string.Empty, "Invalid login attempt.");
             }
-            return View(loginVM);
+             return View(loginVM);
+
         }
 
 
