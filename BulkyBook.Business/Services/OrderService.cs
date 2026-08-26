@@ -45,7 +45,14 @@ namespace BulkyBook.Business.Services
             }
             if (!string.IsNullOrEmpty(status))
             {
-                query = query.Where(o => o.OrderStatus == status);
+                if (status != "all")
+                {
+                    query = query.Where(o => o.OrderStatus.ToLower() == status.ToLower());
+                }
+                else
+                {
+                    query = query.Where(o => o.OrderStatus != "");
+                }
             }
             return await query.ToListAsync();
         }
