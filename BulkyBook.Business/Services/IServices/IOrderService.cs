@@ -12,5 +12,6 @@ namespace BulkyBook.Business.Services.IServices
         Task<IEnumerable<OrderHeader?>> GetAllOrdersAsync(string? userId=null,string? status=null, bool includeUser = false, bool includeDetails = false);
         Task <string> CreateStripeCheckoutSessionAsync(OrderHeader orderHeader, List<ShoppingCart> cartItems, string domain);
         Task  UpdateOrderHeaderAsync(OrderHeader orderHeader);
+        Task UpdateOrderStausAsync(int id,string status, string? carrier=null,string? trakingNumber=null);
     }
 }

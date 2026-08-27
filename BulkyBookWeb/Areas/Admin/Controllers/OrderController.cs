@@ -20,11 +20,13 @@ namespace BulkyBookWeb.Areas.Admin.Controllers
         public OrderController(IOrderService orderService)
         {
             _orderService = orderService;
-        }            
+        }
+        [AllowAnonymous]
         public IActionResult Index()
         {
             return View();
         }
+        [AllowAnonymous]
         public async Task<IActionResult> Details(int orderId)
         {
            
@@ -42,10 +44,50 @@ namespace BulkyBookWeb.Areas.Admin.Controllers
             {
                 return Unauthorized();
             }
-         
-           await _orderService.UpdateOrderHeaderAsync(OrderHeader);
-           TempData["success"] = "Order updated successfully";
-           return RedirectToAction(nameof(Index));
+
+            await _orderService.UpdateOrderHeaderAsync(OrderHeader);
+            TempData["success"] = "Order updated successfully";
+            return RedirectToAction(nameof(Index));
+
+        }
+        public async Task<IActionResult> UpdateOrderStatus(string status)
+        {
+            var orderFromDb = await _orderService.GetOrderByIdAsync(OrderHeader.Id);
+            var claimsIdentity = (ClaimsIdentity)User.Identity;
+            var userId = claimsIdentity?.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (string.IsNullOrEmpty(userId))
+            {
+                return Unauthorized();
+            }
+            string message;
+            switch(status)
+            {
+                case Status.StatusInProcess:
+                    await _orderService.UpdateOrderStausAsync(orderFromDb.Id, status);
+                    message = "Order processing started sucessfully";
+                    break;
+                case Status.StatusCancelled:
+                    await _orderService.UpdateOrderStausAsync(orderFromDb.Id, status);
+                    message = "Order cancelled sucessfully";
+                    break;
+                case Status.StatusRefunded:
+                    await _orderService.UpdateOrderStausAsync(orderFromDb.Id, status);
+                    message = "Order Refunded sucessfully";
+                    break;
+                case Status.StatusShipped:
+                    await _orderService.UpdateOrderStausAsync(orderFromDb.Id, Status.StatusShipped,orderFromDb.Carrier,orderFromDb.TrackingNumber);
+                    message = "Order Shipped sucessfully";
+                    break;
+                default:
+                    message = "Invalid status update";
+                    return RedirectToAction(nameof(Details), new { orderId = orderFromDb.Id });
+
+
+            }
+
+            await _orderService.UpdateOrderHeaderAsync(OrderHeader);
+            TempData["success"] = message;
+            return RedirectToAction(nameof(Details), new { orderId = orderFromDb.Id });
 
         }
         #region API CALLS

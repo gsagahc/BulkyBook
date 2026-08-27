@@ -2,9 +2,7 @@
 using BulkyBook.DataAccess.Data;
 using BulkyBook.Models;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Text;
+using BulkyBook.Utility;
 
 namespace BulkyBook.Business.Services
 {
@@ -87,20 +85,47 @@ namespace BulkyBook.Business.Services
                 orderFromDb.State = orderHeader.State;
                 orderFromDb.PostalCode = orderHeader.PostalCode;
 
-               
-                orderFromDb.Carrier = orderHeader.Carrier;
-                orderFromDb.TrackingNumber = orderHeader.TrackingNumber;
-
-               
-
-               
+               if (!string.IsNullOrEmpty(orderHeader.Carrier) && orderFromDb.OrderStatus == Status.StatusShipped)
+                {
+                    orderFromDb.Carrier = orderHeader.Carrier;
+                }
+                if(!string.IsNullOrEmpty(orderHeader.TrackingNumber) && orderFromDb.OrderStatus==Status.StatusShipped)
+                {
+                    orderFromDb.TrackingNumber = orderHeader.TrackingNumber;
+                }                        
                 await _context.SaveChangesAsync();
             }
             else
             {
-                throw new Exception("Pedido não encontrado no banco de dados.");
+                throw new Exception("Order not found");
             }
 
+        }
+
+        public async Task UpdateOrderStausAsync(int id, string status, string? carrier = null, string? trakingNumber = null)
+        {
+            var orderFromDb = await _context.OrderHeaders.FindAsync(id);
+            if (orderFromDb != null)
+            {
+                orderFromDb.OrderStatus = status;
+                if (orderFromDb.OrderStatus == Status.StatusShipped)
+                {
+                    orderFromDb.ShippingDate = DateTime.Now;
+                    if (!string.IsNullOrEmpty(carrier))
+                    {
+                        orderFromDb.Carrier = carrier;
+                    }
+                    if (!string.IsNullOrEmpty(trakingNumber))
+                    {
+                        orderFromDb.TrackingNumber = trakingNumber;
+                    }
+                }
+                await _context.SaveChangesAsync();
+            }
+            else
+            {
+                throw new Exception($"Order {id} not found");
+            }
         }
     }
 }

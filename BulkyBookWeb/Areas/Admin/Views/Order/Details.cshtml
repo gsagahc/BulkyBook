@@ -1,4 +1,5 @@
 ﻿@using BulkyBook.Models
+@using BulkyBook.Utility
 @model OrderHeader
 <div class="container-fluid py-3">
     <form method="post" enctype="multipart/form-data">
@@ -100,22 +101,24 @@
                                 <input type="text" readonly asp-for="OrderDate" class="form-control-plaintext form-control-sm" value="@Model.OrderDate" />
                             </div>
                         </div>
+                        @if (Model.OrderStatus != Status.StatusApproved && Model.OrderStatus != Status.StatusPending)
+                            {
+                                <div class="row g-2 mb-2">
+                                    <label class="col-4 col-form-label small fw-medium text-secondary">Carrier</label>
+                                    <div class="col-8">
+                                        @* TODO: Bind to Carrier property *@
+                                        <input type="text" asp-for="Carrier" class="form-control form-control-sm" />
+                                    </div>
+                                </div>
 
-                        <div class="row g-2 mb-2">
-                            <label class="col-4 col-form-label small fw-medium text-secondary">Carrier</label>
-                            <div class="col-8">
-                                @* TODO: Bind to Carrier property *@
-                                <input type="text" asp-for="Carrier" class="form-control form-control-sm" />
-                            </div>
-                        </div>
-
-                        <div class="row g-2 mb-2">
-                            <label class="col-4 col-form-label small fw-medium text-secondary">Tracking</label>
-                            <div class="col-8">
-                                @* TODO: Bind to TrackingNumber property *@
-                                <input type="text" asp-for="TrackingNumber" class="form-control form-control-sm" />
-                            </div>
-                        </div>
+                                <div class="row g-2 mb-2">
+                                    <label class="col-4 col-form-label small fw-medium text-secondary">Tracking</label>
+                                    <div class="col-8">
+                                        @* TODO: Bind to TrackingNumber property *@
+                                        <input type="text" asp-for="TrackingNumber" class="form-control form-control-sm" />
+                                    </div>
+                                </div>
+                            }
 
                         <div class="row g-2 mb-2">
                             <label class="col-4 col-form-label small fw-medium text-secondary">Shipping Date</label>
@@ -169,20 +172,27 @@
                                 @* TODO: Display order total *@
                             </div>
                         </div>
-
+                       
                         <div class="d-grid gap-2">
-                            <button type="submit" class="btn btn-accent fw-semibold">
-                                Start Processing
-                            </button>
-
-                            <button type="submit" onclick="return validateInput()" class="btn btn-accent fw-semibold">
-                                Ship Order
-                            </button>
-
-                            <button type="submit" class="btn btn-danger fw-semibold">
-                                Cancel Order
-                            </button>
-                        </div>
+                        @if (Model.OrderStatus == Status.StatusApproved)
+                                {
+                                <button type="submit" asp-action="UpdateOrderStatus" asp-route-status="@Status.StatusInProcess" class="btn btn-accent fw-semibold">
+                                        Start Processing
+                                    </button>
+                                }
+                        @if (Model.OrderStatus == Status.StatusInProcess)
+                                {
+                                <button type="submit" asp-action="UpdateOrderStatus" asp-route-status="@Status.StatusShipped" onclick="return validateInput()" class="btn btn-accent fw-semibold">
+                                        Ship Order
+                                    </button>
+                               }
+                        @if (Model.OrderStatus != Status.StatusRefunded && Model.OrderStatus != Status.StatusCancelled && Model.OrderStatus != Status.StatusShipped)
+                                {
+                                <button type="submit" asp-action="UpdateOrderStatus" asp-route-status="@Status.StatusCancelled" class="btn btn-danger fw-semibold">
+                                        Cancel Order
+                                    </button>
+                                }
+                            </div>
                     </div>
                 </div>
             </div>

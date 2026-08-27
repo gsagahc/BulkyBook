@@ -1,4 +1,4 @@
-﻿   
+﻿@using BulkyBook.Utility;
 <!DOCTYPE html>
 <html lang="en">
 @Html.AntiForgeryToken()
@@ -36,6 +36,22 @@
                         <li class="nav-item">
                             <a class="nav-link" asp-area="Costumer" asp-controller="Home" asp-action="Privacy">Privacy</a>
                         </li>
+                        @if (User.Identity.IsAuthenticated)
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link" asp-area="Admin" asp-controller="Order" asp-action="Index">
+                                    <i class="bi bi-box-seam me-1"></i> My Orders
+                                </a>
+                            </li>
+                        }
+                        @if (User.IsInRole(RoleTypes.RoleAdmin) || User.IsInRole(RoleTypes.RoleEmployee))
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link" asp-area="Admin" asp-controller="Dashboard" asp-action="Index">
+                                    <i class="bi bi-speedometer2 me-1"></i>Admin Portal
+                                </a>
+                            </li>
+                        }
                       
                      </ul>
                       <div class="d-flex align-items-center gap-3">
