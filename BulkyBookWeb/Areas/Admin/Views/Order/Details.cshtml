@@ -1,8 +1,13 @@
-﻿@model OrderHeader
+﻿@using BulkyBook.Models
+@model OrderHeader
 <div class="container-fluid py-3">
-    <form method="post">
+    <form method="post" enctype="multipart/form-data">
         @* TODO: Add hidden input for order ID *@
-
+        <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+        <input type="hidden" asp-for="Id" />
+        <input type="hidden" asp-for="OrderDate" />
+        <input type="hidden" asp-for="ApplicationUserId" />
+        <input type="hidden" asp-for="ShippingDate" />
         @* TODO: Add back to orders link *@
         <a href="#" class="text-decoration-none text-secondary small fw-medium d-inline-flex align-items-center gap-1 mb-3">
             <i class="bi bi-arrow-left"></i> Back to orders
@@ -30,8 +35,8 @@
                             <label class="col-4 col-form-label small fw-medium text-secondary">Name</label>
                             <div class="col-8">
                                 @* TODO: Bind to Name property, make editable for admin, readonly for customer *@
-                                <input type="text" class="form-control form-control-sm" value="@Model.Name" />
-                                <span class="text-danger small"></span>
+                                <input type="text" asp-for="Name" class="form-control form-control-sm" />
+                                <span asp-validation-for="Name" class="text-danger small"></span>
                             </div>
                         </div>
 
@@ -39,8 +44,8 @@
                             <label class="col-4 col-form-label small fw-medium text-secondary">Phone</label>
                             <div class="col-8">
                                 @* TODO: Bind to Phone property *@
-                                <input type="text" class="form-control form-control-sm" value="@Model.PhoneNumber" />
-                                <span class="text-danger small"></span>
+                                <input type="text" asp-for="PhoneNumber" class="form-control form-control-sm" />
+                                <span asp-validation-for="PhoneNumber" class="text-danger small"></span>
                             </div>
                         </div>
 
@@ -48,8 +53,8 @@
                             <label class="col-4 col-form-label small fw-medium text-secondary">Address</label>
                             <div class="col-8">
                                 @* TODO: Bind to Address property *@
-                                <input type="text" class="form-control form-control-sm" value="@Model.StreetAddress" />
-                                <span class="text-danger small"></span>
+                                <input type="text" asp-for="StreetAddress" class="form-control form-control-sm" />
+                                <span asp-validation-for="StreetAddress" class="text-danger small"></span>
                             </div>
                         </div>
 
@@ -57,8 +62,8 @@
                             <label class="col-4 col-form-label small fw-medium text-secondary">City</label>
                             <div class="col-8">
                                 @* TODO: Bind to City property *@
-                                <input type="text" class="form-control form-control-sm" value="@Model.City" />
-                                <span class="text-danger small"></span>
+                                <input type="text" asp-for="City" class="form-control form-control-sm" />
+                                <span asp-validation-for="City" class="text-danger small"></span>
                             </div>
                         </div>
 
@@ -66,8 +71,8 @@
                             <label class="col-4 col-form-label small fw-medium text-secondary">State</label>
                             <div class="col-8">
                                 @* TODO: Bind to State property *@
-                                <input type="text" class="form-control form-control-sm" value="@Model.State" />
-                                <span class="text-danger small"></span>
+                                <input type="text" asp-for="State" class="form-control form-control-sm" />
+                                <span asp-validation-for="State" class="text-danger small"></span>
                             </div>
                         </div>
 
@@ -75,8 +80,8 @@
                             <label class="col-4 col-form-label small fw-medium text-secondary">Zip Code</label>
                             <div class="col-8">
                                 @* TODO: Bind to PostalCode property *@
-                                <input type="text" class="form-control form-control-sm" value="@Model.PostalCode" />
-                                <span class="text-danger small"></span>
+                                <input type="text" asp-for="PostalCode" class="form-control form-control-sm" />
+                                <span asp-validation-for="PostalCode" class="text-danger small"></span>
                             </div>
                         </div>
 
@@ -84,7 +89,7 @@
                             <label class="col-4 col-form-label small fw-medium text-secondary">Email</label>
                             <div class="col-8">
                                 @* TODO: Display user email (read-only) *@
-                                <input type="email" readonly class="form-control-plaintext form-control-sm" value="@Model.ApplicationUser.Email" />
+                                <input type="email" asp-for="ApplicationUser.Email" readonly class="form-control-plaintext form-control-sm" value="@Model.ApplicationUser.Email" />
                             </div>
                         </div>
 
@@ -92,7 +97,7 @@
                             <label class="col-4 col-form-label small fw-medium text-secondary">Order Date</label>
                             <div class="col-8">
                                 @* TODO: Display order date (read-only) *@
-                                <input type="text" readonly class="form-control-plaintext form-control-sm" value="@Model.OrderDate" />
+                                <input type="text" readonly asp-for="OrderDate" class="form-control-plaintext form-control-sm" value="@Model.OrderDate" />
                             </div>
                         </div>
 
@@ -100,7 +105,7 @@
                             <label class="col-4 col-form-label small fw-medium text-secondary">Carrier</label>
                             <div class="col-8">
                                 @* TODO: Bind to Carrier property *@
-                                <input type="text" id="carrier" class="form-control form-control-sm" value="FedEx" />
+                                <input type="text" asp-for="Carrier" class="form-control form-control-sm" />
                             </div>
                         </div>
 
@@ -108,7 +113,7 @@
                             <label class="col-4 col-form-label small fw-medium text-secondary">Tracking</label>
                             <div class="col-8">
                                 @* TODO: Bind to TrackingNumber property *@
-                                <input type="text" id="trackingNumber" class="form-control form-control-sm" value="1234567890" />
+                                <input type="text" asp-for="TrackingNumber" class="form-control form-control-sm" />
                             </div>
                         </div>
 
@@ -133,7 +138,7 @@
                         </h6>
 
                         <span class="badge bg-dark mb-3">
-                            <i class="bi bi-info-circle me-1"></i> <span>@Model.OrderStatus</span>
+                            <i class="bi bi-info-circle me-1" asp-for="OrderStatus"></i> <span>@Model.OrderStatus</span>
                             @* TODO: Display order status *@
                         </span>
 
@@ -144,15 +149,15 @@
                                     <!-- Sample order item -->
                                     <div class="d-flex justify-content-between align-items-start p-3 border-bottom">
                                         <div>
-                                            <p class="fw-medium small mb-0">@product.Product.Title</p>
+                                            <p asp-validation-for="OrderHeader.OrderDetails" class="fw-medium small mb-0">@product.Product.Title</p>
                                             @* TODO: Display product title *@
-                                            <p class="text-secondary mb-0" style="font-size: 0.75rem;">
+                                            <p asp-validation-for="OrderHeader.OrderDetails" class="text-secondary mb-0" style="font-size: 0.75rem;">
                                                 @product.Price.ToString("C") x @product.Count
                                                 @* TODO: Display price and quantity *@
                                             </p>
                                         </div>
 
-                                        <p class="fw-semibold small mb-0" style="color: #17A34A;">
+                                        <p asp-validation-for="OrderHeader.OrderDetails" class="fw-semibold small mb-0" style="color: #17A34A;">
                                         @((product.Price * product.Count).ToString("C"))    
                                             @* TODO: Display line total *@
                                         </p>
@@ -160,7 +165,7 @@
                                 }
                                 <div class="d-flex justify-content-between align-items-center p-3 text-white" style="background: linear-gradient(to right, #065f46, #282828, #191414);">
                                 <span class="fw-bold small text-uppercase">Total</span>
-                                <span class="fw-bold fs-5">@Model.OrderTotal.ToString("C")</span>
+                                <span asp-validation-for="OrderTotal" asp-for="OrderTotal" class="fw-bold fs-5">@Model.OrderTotal.ToString("C")</span>
                                 @* TODO: Display order total *@
                             </div>
                         </div>

@@ -70,5 +70,37 @@ namespace BulkyBook.Business.Services
             }
             return query.FirstOrDefaultAsync(o => o.Id == id);
         }
+
+        public async Task UpdateOrderHeaderAsync(OrderHeader orderHeader)
+        {
+           
+            var orderFromDb = await _context.OrderHeaders
+                .FirstOrDefaultAsync(o => o.Id == orderHeader.Id);
+
+            if (orderFromDb != null)
+            {
+               
+                orderFromDb.Name = orderHeader.Name;
+                orderFromDb.PhoneNumber = orderHeader.PhoneNumber;
+                orderFromDb.StreetAddress = orderHeader.StreetAddress;
+                orderFromDb.City = orderHeader.City;
+                orderFromDb.State = orderHeader.State;
+                orderFromDb.PostalCode = orderHeader.PostalCode;
+
+               
+                orderFromDb.Carrier = orderHeader.Carrier;
+                orderFromDb.TrackingNumber = orderHeader.TrackingNumber;
+
+               
+
+               
+                await _context.SaveChangesAsync();
+            }
+            else
+            {
+                throw new Exception("Pedido não encontrado no banco de dados.");
+            }
+
+        }
     }
 }

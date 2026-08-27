@@ -3,6 +3,8 @@ using BulkyBook.Models;
 using BulkyBook.Utility;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
+using BulkyBook.Models.ViewModels;
 
 namespace BulkyBookWeb.Areas.Admin.Controllers
 {
@@ -25,8 +27,26 @@ namespace BulkyBookWeb.Areas.Admin.Controllers
         }
         public async Task<IActionResult> Details(int orderId)
         {
-            OrderHeader = await _orderService.GetOrderByIdAsync(orderId, includeDetails:true, includeUser:true);
-            return View(OrderHeader);
+           
+           OrderHeader = await _orderService.GetOrderByIdAsync(orderId, includeDetails:true, includeUser:true);
+           return View(OrderHeader);
+        }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [ActionName("Details")]
+        public async Task<IActionResult> DetailsPost()
+        {
+            var claimsIdentity = (ClaimsIdentity)User.Identity;
+            var userId = claimsIdentity?.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (string.IsNullOrEmpty(userId))
+            {
+                return Unauthorized();
+            }
+         
+           await _orderService.UpdateOrderHeaderAsync(OrderHeader);
+           TempData["success"] = "Order updated successfully";
+           return RedirectToAction(nameof(Index));
+
         }
         #region API CALLS
         [AllowAnonymous]
