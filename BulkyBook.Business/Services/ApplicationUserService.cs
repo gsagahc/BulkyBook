@@ -45,9 +45,7 @@ namespace BulkyBook.Business.Services
             return user;
         }
     
-
-
-         
+       
 
         public async Task<IEnumerable<ApplicationUser>> GetAllUsersAsync()
         {
