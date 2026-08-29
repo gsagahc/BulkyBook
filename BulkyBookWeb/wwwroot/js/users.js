@@ -25,7 +25,7 @@ function loadDataTable() {
                     <a onclick="LockUnlock('${data.id}')" class="btn btn-sm ${isLocked ? 'btn-danger' : 'btn-success'}">
                                  <i class="bi bi-${isLocked ? 'lock' : 'unlock'}-fill"></i> ${isLocked ? 'Lock' : 'Unlock'}
                             </a>
-                            <a href="/admin/user/RoleManagment?id=${data.id}" class="btn btn-sm btn-outline-secondary">
+                            <a href="/admin/user/RoleManagment?userId=${data.id}" class="btn btn-sm btn-outline-secondary">
                                  <i class="bi bi-person-badge"></i> Role
                             </a>
                               <a href="/admin/user/ChangePassword?id=${data.id}" class="btn btn-sm btn-outline-danger">

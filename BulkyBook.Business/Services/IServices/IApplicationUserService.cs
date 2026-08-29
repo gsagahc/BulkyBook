@@ -13,5 +13,7 @@ namespace BulkyBook.Business.Services.IServices
         Task<ApplicationUser?> GetUserByIdAsync(string userId);
         Task<IEnumerable<ApplicationUser>> GetAllUsersAsync();
         Task<ApplicationUser> GetUserByEmailAsync(string email);
+
+        
     }
 }

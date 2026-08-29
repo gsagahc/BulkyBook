@@ -11,7 +11,7 @@ namespace BulkyBook.Models.ViewModels
         [Display(Name = "User Email")]
         public string UserEmail { get; set; }
 
-
+            
         [Required]
         [DataType(DataType.Password)]
         [Display(Name = "New Password")]
