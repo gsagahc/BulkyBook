@@ -66,21 +66,7 @@ namespace BulkyBookWeb.Areas.Admin.Controllers
             TempData["success"] = "Password updated successfully";
             return RedirectToAction("Index");
         }
-        [HttpPost]
-        public async Task<ActionResult> UnlockUser(string UserId)
-        {
-            ApplicationUser user = await _userService.GetUserByIdAsync(UserId);
-
-            if (user == null)
-            {
-                return Json(new { success = false, message = "User not found" });
-            }
-            string token = await _userService.GerarTokenReset(user);
-
-          
-            TempData["success"] = "Password updated successfully";
-            return RedirectToAction("Index");
-        }
+      
 
         public ActionResult Create()
         {
@@ -206,6 +192,19 @@ namespace BulkyBookWeb.Areas.Admin.Controllers
             }
 
             return Json(new { data = users });
+        }
+        [HttpPost]
+        public async Task<IActionResult> LockUnlockUser([FromBody] string id)
+        {
+            var user = await _userService.GetUserByIdAsync(id);
+
+            if (user == null)
+            {
+                return Json(new { success = false, message = "User not found" });
+            }
+            IdentityResult result = await _userService.LockUnlockUserAsync(user);
+            return Json(new { success = true, message = result.ToString() });
+          
         }
         #endregion
     }

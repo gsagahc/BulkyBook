@@ -83,10 +83,20 @@ namespace BulkyBook.Business.Services
             return resultado;
         }
 
-        public async Task<IdentityResult> UnlockUser(ApplicationUser user, DateTime dateTime)
+        public async Task<IdentityResult> LockUnlockUserAsync(ApplicationUser user)
         {
-            IdentityResult resultado = await _userManager.SetLockoutEndDateAsync(user, dateTime);
-            return resultado;
+            bool isLocked = await IsUserLockedAsync(user);
+            if (isLocked)
+            {
+                IdentityResult resultado = await _userManager.SetLockoutEndDateAsync(user, DateTimeOffset.UtcNow);
+                return resultado;
+            } 
+            else
+            {
+                IdentityResult resultado = await _userManager.SetLockoutEndDateAsync(user, DateTimeOffset.UtcNow.AddYears(1000));
+                return resultado;
+            }
+            
         }
     }
 }

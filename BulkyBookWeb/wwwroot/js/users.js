@@ -22,7 +22,7 @@ function loadDataTable() {
                     var isLocked = lockout > today;
 
                     return `<div class="d-flex gap-2 justify-content-end">
-                    <a onclick="/admin/user/UnlockUser('${data.id}')" class="btn btn-sm ${isLocked ? 'btn-danger' : 'btn-success'}">
+                    <a onclick="LockUnlock('${data.id}')" class="btn btn-sm ${isLocked ? 'btn-danger' : 'btn-success'}">
                                  <i class="bi bi-${isLocked ? 'lock' : 'unlock'}-fill"></i> ${isLocked ? 'Lock' : 'Unlock'}
                             </a>
                             <a href="/admin/user/RoleManagment?userId=${data.id}" class="btn btn-sm btn-outline-secondary">
@@ -41,7 +41,7 @@ function loadDataTable() {
 function LockUnlock(id) {
     $.ajax({
         type: "POST",
-        url: '/admin/user/LockUnlock',
+        url: '/admin/user/LockUnlockUser',
         data: JSON.stringify(id),
         contentType: "application/json",
         success: function (data) {

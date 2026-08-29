@@ -17,6 +17,7 @@ namespace BulkyBookWeb.Areas.Identity.Controllers
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly RoleManager<IdentityRole> _roleManager;
+      
 
         public AccountController(IApplicationUserService applicationUserService, UserManager<ApplicationUser> userManager, 
             SignInManager<ApplicationUser> signInManager, RoleManager<IdentityRole> roleManager)
@@ -39,7 +40,8 @@ namespace BulkyBookWeb.Areas.Identity.Controllers
             if (ModelState.IsValid) {
                 
                 var result = await _signInManager.PasswordSignInAsync(userName:loginVM.Email,
-                 password:loginVM.Password, isPersistent: loginVM.RememberMe, lockoutOnFailure: false);
+                password:loginVM.Password, isPersistent: loginVM.RememberMe, lockoutOnFailure: false);
+               
                 if (result.Succeeded)
                 {
                     if (User.IsInRole(RoleTypes.RoleAdmin))

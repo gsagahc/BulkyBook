@@ -16,8 +16,8 @@ namespace BulkyBook.Business.Services.IServices
         Task<ApplicationUser> GetUserByEmailAsync(string email);
         Task<IdentityResult> ResetPasswordAsync(ApplicationUser user, string token, string newPassword);
         Task<string> GerarTokenReset(ApplicationUser user);
-        Task<bool> IsUserLockedAsync(ApplicationUser user);
-        Task<IdentityResult> UnlockUser(ApplicationUser user, DateTime dateTime);
+        Task <bool> IsUserLockedAsync(ApplicationUser user);
+        Task<IdentityResult> LockUnlockUserAsync(ApplicationUser user);
 
         
     }
