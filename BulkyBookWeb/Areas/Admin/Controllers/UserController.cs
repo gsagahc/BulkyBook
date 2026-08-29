@@ -160,25 +160,26 @@ namespace BulkyBookWeb.Areas.Admin.Controllers
             }
         }
 
-      
-        public ActionResult Delete(int id)
+       [ActionName("Delete")]
+        public async Task<IActionResult> Delete(string id)
         {
-            return View();
-        }
+            if (await _userService.UserHasOrdersAsync(id))
+            {
+                TempData["error"] = "User cannot be deleted because User has orders.";
+                return RedirectToAction("Index");
+            }
+            var user = await _userService.GetUserByIdAsync(id);
+            if (user != null)
+            {
+                await _userService.DeleteUserAsync(user);
+                TempData["success"] = "User deleted successfully";
+            }
+            else
+            {
+                TempData["error"] = "User not found";
+            }    
+            return RedirectToAction("Index");
 
-  
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
-        {
-            try
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
         }
         #region API CALLS
         [AllowAnonymous]

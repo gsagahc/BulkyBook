@@ -18,7 +18,9 @@ namespace BulkyBook.Business.Services.IServices
         Task<string> GerarTokenReset(ApplicationUser user);
         Task <bool> IsUserLockedAsync(ApplicationUser user);
         Task<IdentityResult> LockUnlockUserAsync(ApplicationUser user);
+        Task<bool> UserHasOrdersAsync(string id);
+        Task DeleteUserAsync(ApplicationUser user);
 
-        
+
     }
 }

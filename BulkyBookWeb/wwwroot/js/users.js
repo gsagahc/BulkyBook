@@ -31,6 +31,9 @@ function loadDataTable() {
                               <a href="/admin/user/ChangePassword?id=${data.id}" class="btn btn-sm btn-outline-danger">
                                  <i class="bi bi-key-fill"></i> Password
                             </a>
+                                <a href="/admin/user/Delete?id=${data.id}" class="btn btn-sm btn-outline-danger">
+                                 <i class="bi bi-key-fill"></i> Delete
+                            </a>
                         </div > `;
                 }
             }

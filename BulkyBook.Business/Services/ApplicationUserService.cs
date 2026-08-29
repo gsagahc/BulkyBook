@@ -98,5 +98,21 @@ namespace BulkyBook.Business.Services
             }
             
         }
+
+        public async Task<bool> UserHasOrdersAsync(string id)
+        {
+            return await _context.OrderHeaders.AnyAsync(p => p.ApplicationUserId == id);
+        }
+
+        public async Task DeleteUserAsync(ApplicationUser user)
+        {
+            if (user == null)
+            {
+                throw new KeyNotFoundException($"User not found.");
+            }
+            _context.Users.Remove(user);
+            await _context.SaveChangesAsync();
+
+        }
     }
 }
