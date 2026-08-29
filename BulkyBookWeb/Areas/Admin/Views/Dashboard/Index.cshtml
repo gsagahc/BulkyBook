@@ -1,4 +1,4 @@
-﻿
+﻿@model DashboardVM;
 
 <div class="mb-4">
 	<h1 class="h4 fw-bold">Welcome back! 👋</h1>
@@ -28,7 +28,7 @@
 					<div class="rounded d-flex align-items-center justify-content-center" style="width: 40px; height: 40px; background: #d1fae5;">
 						<i class="bi bi-truck" style="color: #10b981;"></i>
 					</div>
-					<span class="text-uppercase fw-semibold text-secondary" style="font-size: 0.6rem; letter-spacing: 0.05em;">Orders</span>
+					<span class="text-uppercase fw-semibold text-secondary" style="font-size: 0.6rem; letter-spacing: 0.05em;">@Model.TotalOrders Orders</span>
 				</div>
 				<p class="h4 fw-bold text-dark mb-0"></p>
 				<p class="text-secondary mb-0" style="font-size: 0.75rem;">View all orders &rarr;</p>

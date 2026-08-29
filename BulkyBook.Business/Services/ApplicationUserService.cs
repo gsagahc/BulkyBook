@@ -2,8 +2,10 @@ using BulkyBook.Business.Services.IServices;
 using BulkyBook.DataAccess.Data;
 using BulkyBook.Models;
 using BulkyBook.Models.ViewModels;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using System;
+using System.CodeDom.Compiler;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks; // added
@@ -13,10 +15,12 @@ namespace BulkyBook.Business.Services
     public class ApplicationUserService : IApplicationUserService
     {
         private readonly ApplicationDbContext _context;
+        private readonly UserManager<ApplicationUser> _userManager;
      
-        public ApplicationUserService(ApplicationDbContext context)
+        public ApplicationUserService(ApplicationDbContext context, UserManager<ApplicationUser> userManager)
         {
             _context = context;
+            _userManager = userManager;
         }
 
         public Task<ApplicationUser> AddRegister(RegisterVM registerVM)
@@ -44,8 +48,12 @@ namespace BulkyBook.Business.Services
             await _context.SaveChangesAsync();
             return user;
         }
-    
-       
+
+        public async Task<string> GerarTokenReset(ApplicationUser user)
+        {
+            string token = await _userManager.GeneratePasswordResetTokenAsync(user);
+            return token;
+        }
 
         public async Task<IEnumerable<ApplicationUser>> GetAllUsersAsync()
         {
@@ -62,6 +70,23 @@ namespace BulkyBook.Business.Services
             return await _context.Users.FirstOrDefaultAsync(u => u.Id == userId);
         }
 
-       
+        public Task<bool> IsUserLockedAsync(ApplicationUser user)
+        {
+            return _userManager.IsLockedOutAsync(user);
+        }
+
+        public async Task<IdentityResult> ResetPasswordAsync(ApplicationUser user, string token, string newPassword)
+        {
+         
+             IdentityResult resultado = await _userManager.ResetPasswordAsync(user, token, newPassword);
+
+            return resultado;
+        }
+
+        public async Task<IdentityResult> UnlockUser(ApplicationUser user, DateTime dateTime)
+        {
+            IdentityResult resultado = await _userManager.SetLockoutEndDateAsync(user, dateTime);
+            return resultado;
+        }
     }
 }

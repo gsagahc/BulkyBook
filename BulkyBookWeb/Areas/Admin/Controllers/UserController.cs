@@ -51,6 +51,36 @@ namespace BulkyBookWeb.Areas.Admin.Controllers
 
             return View(adminChangePassowordVM);
         }
+        [HttpPost]
+        public async Task<ActionResult> ChangePasswordPost(string NewPassword, string UserId)
+        {
+            ApplicationUser user = await _userService.GetUserByIdAsync(UserId);
+             
+            if (user == null)
+            {
+                return Json(new { success = false, message = "User not found" });
+            }
+            string token = await _userService.GerarTokenReset(user);
+           
+            await _userService.ResetPasswordAsync(user, token, NewPassword);
+            TempData["success"] = "Password updated successfully";
+            return RedirectToAction("Index");
+        }
+        [HttpPost]
+        public async Task<ActionResult> UnlockUser(string UserId)
+        {
+            ApplicationUser user = await _userService.GetUserByIdAsync(UserId);
+
+            if (user == null)
+            {
+                return Json(new { success = false, message = "User not found" });
+            }
+            string token = await _userService.GerarTokenReset(user);
+
+          
+            TempData["success"] = "Password updated successfully";
+            return RedirectToAction("Index");
+        }
 
         public ActionResult Create()
         {
@@ -86,7 +116,6 @@ namespace BulkyBookWeb.Areas.Admin.Controllers
 
         }
         [HttpPost]
-       
         public async Task<IActionResult> RoleManagmentPost(RoleManagmentVM roleManagmentVM)
         {
             var user = await _userService.GetUserByIdAsync(roleManagmentVM.ApplicationUser.Id);
@@ -95,7 +124,7 @@ namespace BulkyBookWeb.Areas.Admin.Controllers
                 string oldRole = (await _userManager.GetRolesAsync(user)).FirstOrDefault();
                 if (!(roleManagmentVM.ApplicationUser.Role == oldRole))
                 {
-                    //update Role
+                    
                     await _userManager.RemoveFromRoleAsync(user, oldRole);
                     await _userManager.AddToRoleAsync(user, roleManagmentVM.ApplicationUser.Role);
                 }

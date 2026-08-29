@@ -1,4 +1,9 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using BulkyBook.Business.Services;
+using BulkyBook.Business.Services.IServices;
+using BulkyBook.Models;
+using BulkyBook.Models.ViewModels;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BulkyBookWeb.Areas.Admin.Controllers
@@ -7,9 +12,25 @@ namespace BulkyBookWeb.Areas.Admin.Controllers
     [Authorize(Roles = "Admin, Employee")]
     public class DashboardController : Controller
     {
-        public IActionResult Index()
+        private readonly  IApplicationUserService _userService;
+        private readonly IProductService _productService;
+        private readonly IOrderService _orderService;
+        public DashboardController(IProductService productService, IApplicationUserService userService, IOrderService orderService)
         {
-            return View();
+            _productService = productService;
+            _userService = userService;
+            _orderService = orderService;
+
+        }
+        public async Task<IActionResult> Index()
+        {
+            int OrderCount = await _orderService.GetOrderCountAsync();
+            DashboardVM dashBoardVM = new()
+            {
+                TotalOrders = OrderCount
+            };
+            
+            return View(dashBoardVM);
         }
     }
 }

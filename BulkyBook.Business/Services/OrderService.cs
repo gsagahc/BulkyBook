@@ -1,8 +1,9 @@
 ﻿using BulkyBook.Business.Services.IServices;
 using BulkyBook.DataAccess.Data;
 using BulkyBook.Models;
-using Microsoft.EntityFrameworkCore;
 using BulkyBook.Utility;
+using Microsoft.EntityFrameworkCore;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace BulkyBook.Business.Services
 {
@@ -67,6 +68,13 @@ namespace BulkyBook.Business.Services
                 query = query.Include(o => o.OrderDetails).ThenInclude(od => od.Product);
             }
             return query.FirstOrDefaultAsync(o => o.Id == id);
+        }
+
+        public async Task<int> GetOrderCountAsync(bool includeCancelled = false)
+        {
+            var query = _context.OrderHeaders.AsQueryable();
+            int count = query.Count();
+            return count;
         }
 
         public async Task UpdateOrderHeaderAsync(OrderHeader orderHeader)
