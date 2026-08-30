@@ -73,8 +73,12 @@ namespace BulkyBookWeb.Areas.Admin.Controllers
             return View();
         }
 
+        public UserManager<ApplicationUser> Get_userManager1()
+        {
+            return _userManager;
+        }
 
-        public async Task<IActionResult>  RoleManagment(string userId)
+        public async Task<IActionResult>  RoleManagment(string userId, UserManager<ApplicationUser> _userManager1)
         {
             var user = await _userService.GetUserByIdAsync(userId);
             if (user != null)
@@ -89,9 +93,10 @@ namespace BulkyBookWeb.Areas.Admin.Controllers
 
                     })
                 };
+              
                 RoleVM.ApplicationUser.Role = (await _userManager.GetRolesAsync(user)).FirstOrDefault();
-
                 return View(RoleVM);
+              
             }
             else
             {

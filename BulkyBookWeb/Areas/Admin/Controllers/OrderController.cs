@@ -1,10 +1,12 @@
-﻿using BulkyBook.Business.Services.IServices;
+﻿using BulkyBook.Business.Services;
+using BulkyBook.Business.Services.IServices;
 using BulkyBook.Models;
+using BulkyBook.Models.ViewModels;
 using BulkyBook.Utility;
+using Mailjet.Client.Resources;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
-using BulkyBook.Models.ViewModels;
 
 namespace BulkyBookWeb.Areas.Admin.Controllers
 {
@@ -15,11 +17,18 @@ namespace BulkyBookWeb.Areas.Admin.Controllers
         private readonly IOrderService _orderService;
         private readonly ICategoryService _categoryService;
         private readonly IWebHostEnvironment _webHostEnvironment;
+        private readonly IEmailService _emailService;
+
+        private readonly IApplicationUserService _userService;
+
         [BindProperty]
         public OrderHeader OrderHeader { get; set; }
-        public OrderController(IOrderService orderService)
+        public OrderController(IOrderService orderService, IEmailService emailService, 
+            IApplicationUserService userService)
         {
             _orderService = orderService;
+            _emailService = emailService;
+            _userService  = userService;
         }
         [AllowAnonymous]
         public IActionResult Index()
@@ -59,6 +68,7 @@ namespace BulkyBookWeb.Areas.Admin.Controllers
             {
                 return Unauthorized();
             }
+            ApplicationUser user = await _userService.GetUserByIdAsync(orderFromDb.ApplicationUserId);
             string message;
             switch(status)
             {
@@ -77,6 +87,19 @@ namespace BulkyBookWeb.Areas.Admin.Controllers
                 case Status.StatusShipped:
                     await _orderService.UpdateOrderStausAsync(orderFromDb.Id, Status.StatusShipped,orderFromDb.Carrier,orderFromDb.TrackingNumber);
                     message = "Order Shipped sucessfully";
+                 
+                    
+                    Email email = new Email();
+
+                    email.MailTo = user.Email;
+                    email.OrderId = orderFromDb.Id;
+                    email.OrderTotal = (decimal)orderFromDb.OrderTotal;
+                    email.UserAddress = user.StreetAddress;
+                    email.UserCity = user.City;
+                    email.UserPostalCode = user.PostalCode;
+                    email.OrderCarrier = orderFromDb.Carrier; 
+                    email.OrderTrakingNumber = orderFromDb.TrackingNumber;
+                    await _emailService.SendOrderShippedInformationAsync(email);
                     break;
                 default:
                     message = "Invalid status update";
